@@ -79,7 +79,8 @@ ggsave(file = imageFile)
 ###########
 
 ocdBoxplot <- ggplot(ocdMelt, aes(Group, Frequency, colour = Outcome_Measure))
-ocdBoxplot + geom_boxplot() + labs(x = "Treatment Group", y = "Number of Thoughts/Actions", colour = "Outcome Measure") + scale_y_continuous(breaks = seq(0, 20, by = 2))
+ocdBoxplot + geom_boxplot() + labs(x = "Treatment Group", y = "Number of Thoughts/Actions", colour = "Outcome Measure") + 
+scale_y_continuous(breaks = seq(0, 20, by = 2))
 imageFile <- paste("C:/R Portfolio/MANOVA","16 OCD Boxplot.png",sep="/")
 ggsave(file = imageFile)
 
@@ -106,10 +107,10 @@ options(digits = 7)
 # Absence of multicollinearity. The dependent (outcome) variables cannot be too correlated to each other. 
 # No correlation should be above r = 0.90 [Tabachnick and Fidell (2012)}.
 # Linearity between all outcome variables for each group.
-# Homogeneity of variances. The Levene's test can be used to test the equality of variances between groups. Non-significant values of Levene's test indicate equal variance 
-# between groups.
-# Homogeneity of variance-covariance matrices. The Box's M Test can be used to check the equality of covariance between the groups. This is the equivalent of a multivariate 
-# homogeneity of variance. This test is considered as highly sensitive. Therefore, significance for this test is determined at alpha = 0.001.
+# Homogeneity of variances. The Levene's test can be used to test the equality of variances between groups. Non-significant values of Levene's test 
+indicate equal variance between groups.
+# Homogeneity of variance-covariance matrices. The Box's M Test can be used to check the equality of covariance between the groups. This is the equivalent 
+of a multivariate homogeneity of variance. This test is considered as highly sensitive. Therefore, significance for this test is determined at alpha = 0.001.
 
 ##############################
 # Check Adequate Sample Size #
@@ -149,8 +150,8 @@ ocdData %>%
 
 # Multivariate outliers are data points that have an unusual combination of values on the outcome (or dependent) variables.
 
-# In MANOVA setting, the Mahalanobis distance is generally used to detect multivariate outliers. The distance tells us how far an observation is from the center of the cloud, 
-# taking into account the shape (covariance) of the cloud as well.
+# In MANOVA setting, the Mahalanobis distance is generally used to detect multivariate outliers. The distance tells us how far an observation is from the 
+center of the cloud, taking into account the shape (covariance) of the cloud as well.
 
 # The function mahalanobis_distance() [rstatix package] can be easily used to compute the Mahalanobis distance and to flag multivariate outliers. 
 
@@ -174,8 +175,8 @@ aq.plot(ocdData[, 2:3])
 # Check univariate normality assumption #
 #########################################
 
-# The normality assumption can be checked by computing Shapiro-Wilk test for each outcome variable at each level of the grouping variable. If the data is normally 
-# distributed, the p-value should be greater than 0.05.
+# The normality assumption can be checked by computing Shapiro-Wilk test for each outcome variable at each level of the grouping variable. If the data is 
+normally distributed, the p-value should be greater than 0.05.
 
 ocdData %>%
   group_by(Group) %>%
@@ -206,13 +207,13 @@ ocdData %>%
 # Identify multicollinearity #
 ##############################
 
-# Ideally the correlation between the outcome variables should be moderate, not too high. A correlation above 0.9 is an indication of multicollinearity, which is
-# problematic for MANOVA.
+# Ideally the correlation between the outcome variables should be moderate, not too high. A correlation above 0.9 is an indication of multicollinearity, 
+which is problematic for MANOVA.
 
 # In other hand, if the correlation is too low, you should consider running separate one-way ANOVA for each outcome variable.
 
-# Compute pairwise Pearson correlation coefficients between the outcome variable. In the following R code, we'll use the function cor_test() [rstatix package]. If you have 
-# more than two outcome variables, consider using the function cor_mat():
+# Compute pairwise Pearson correlation coefficients between the outcome variable. In the following R code, we'll use the function 
+cor_test() [rstatix package]. If you have more than two outcome variables, consider using the function cor_mat():
   
 ocdData %>% cor_test(Actions, Thoughts)
 
@@ -222,8 +223,8 @@ ocdData %>% cor_test(Actions, Thoughts)
 # Check linearity assumption #
 ##############################
 
-# The pairwise relationship between the outcome variables should be linear for each group. This can be checked visually by creating a scatter plot matrix using the R 
-# function ggpairs() [GGally package]. In our example, we have only one pair:
+# The pairwise relationship between the outcome variables should be linear for each group. This can be checked visually by creating a scatter plot matrix 
+using the R function ggpairs() [GGally package]. In our example, we have only one pair:
   
 # Create a scatterplot matrix by group #
 
@@ -252,18 +253,18 @@ box_m(ocdData[, c("Actions", "Thoughts")], ocdData$Group)
 
 # The test is not statistically significant (i.e., p < 0.180), so the data have not violated the assumption of homogeneity of variance-covariance matrices.
 
-# Note that, if you have balanced design (i.e., groups with similar sizes), you don't need to worry too much about violation of the homogeneity of variances-covariance 
-# matrices and you can continue your analysis.
+# Note that, if you have balanced design (i.e., groups with similar sizes), you don't need to worry too much about violation of the homogeneity of 
+variances-covariance matrices and you can continue your analysis.
 
-# However, having an unbalanced design is problematic. Possible solutions include: 1) transforming the dependent variables; 2) running the test anyway, but using Pillai's 
-# multivariate statistic instead of Wilks' statistic.
+# However, having an unbalanced design is problematic. Possible solutions include: 1) transforming the dependent variables; 2) running the test anyway, 
+but using Pillai's multivariate statistic instead of Wilks' statistic.
 
 ###############################################
 # Check the homogneity of variance assumption #
 ###############################################
 
-# For each of the outcome variables, the one-way MANOVA assumes that there are equal variances between groups. This can be checked using the Levene's test of equality of 
-# variances. Key R function: levene_test() [rstatix package].
+# For each of the outcome variables, the one-way MANOVA assumes that there are equal variances between groups. This can be checked using the Levene's test 
+of equality of variances. Key R function: levene_test() [rstatix package].
 
 # Procedure:
   
@@ -280,8 +281,8 @@ ocdData %>%
 
 # As there is not have homogeneity of variances, you can try to transform the outcome (dependent) variable to correct for the unequal variances.
 
-# Alternatively, you can continue, but accept a lower level of statistical significance (alpha level) for your MANOVA result. Additionally, any follow-up univariate 
-# ANOVAs will need to be corrected for this violation (i.e., you will need to use different post-hoc tests).
+# Alternatively, you can continue, but accept a lower level of statistical significance (alpha level) for your MANOVA result. Additionally, any follow-up 
+univariate ANOVAs will need to be corrected for this violation (i.e., you will need to use different post-hoc tests).
 
 ################
 ################
@@ -293,8 +294,8 @@ ocdData %>%
 
 # The most commonly recommended multivariate statistic to use is Wilks' Lambda.
 
-# However, Pillai's Trace is more robust and is recommended when you have unbalanced design and also have a statistically significant Box's M result (as in our example, 
-# see previous section).
+# However, Pillai's Trace is more robust and is recommended when you have unbalanced design and also have a statistically significant Box's M result 
+(as in our example, see previous section).
 
 # Note that, "Pillai" is the default in the R Manova() function [car package].
 
@@ -307,8 +308,8 @@ Manova(model, test.statistic = "Pillai")
 # Post Hoc Tests #
 ##################
 
-# A statistically significant one-way MANOVA can be followed up by univariate one-way ANOVA examining, separately, each dependent variable. The goal is to identify the 
-specific dependent variables that contributed to the significant global effect.
+# A statistically significant one-way MANOVA can be followed up by univariate one-way ANOVA examining, separately, each dependent variable. The goal is to 
+identify the specific dependent variables that contributed to the significant global effect.
 
 # Compute univariate one-way ANOVA:
 
@@ -333,11 +334,11 @@ grouped.data %>% kruskal_test(value ~ Group)
 # or use aov()
 grouped.data %>% anova_test(value ~ Group)
 
-# Note that, as there are two dependent variables, we need to apply Bonferroni multiple testing correction needs to be applied by decreasing the the level to declare 
-statistical significance.
+# Note that, as there are two dependent variables, we need to apply Bonferroni multiple testing correction needs to be applied by decreasing the the 
+level to declare statistical significance.
 
-# To do this, the classic alpha level (0.05) must be divided by the number of tests (or dependent variables, here 2). This leads to a significance acceptance criteria 
-# of p < 0.025 rather than p < 0.05 because there are two dependent variables.
+# To do this, the classic alpha level (0.05) must be divided by the number of tests (or dependent variables, here 2). This leads to a significance 
+acceptance criteria of p < 0.025 rather than p < 0.05 because there are two dependent variables.
 
 #########################################
 # Compute multiple pairwise comparisons #
@@ -347,7 +348,8 @@ statistical significance.
 
 # The R functions tukey_hsd() [rstatix package] can be used to compute Tukey post-hoc tests if the homogeneity of variance assumption is met.
 
-# If you had violated the assumption of homogeneity of variances, as in our example, you might prefer to run a Games-Howell post-hoc test. It's also possible to use the 
+# If you had violated the assumption of homogeneity of variances, as in our example, you might prefer to run a Games-Howell post-hoc test. It's also
+possible to use the 
 # function pairwise_t_test() [rstatix] with the option pool.sd = FALSE and var.equal = FALSE .
 
 pwc <- ocdData %>%
